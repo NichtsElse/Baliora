@@ -80,6 +80,8 @@ export const buildAutoReplyTemplateParams = (payload, formBody) => ({
   heading: payload.autoReplyHeading,
   intro: payload.autoReplyIntro,
   lead_name: formatFieldValue(formBody.name || formBody.guest_name),
+  email: formatFieldValue(formBody.email),
+  whatsapp: formatFieldValue(formBody.whatsapp),
   villa_name: formatFieldValue(formBody.villa_name || formBody.villa_location),
   villa_location: formatFieldValue(formBody.villa_location),
   bedroom_count: formatFieldValue(formBody.bedroom_count),

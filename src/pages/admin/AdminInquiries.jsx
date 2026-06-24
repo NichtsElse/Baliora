@@ -80,9 +80,9 @@ export default function AdminInquiries() {
           </SelectTrigger>
           <SelectContent className="bg-slate-800 border-slate-700 text-white">
             <SelectItem value="all">All Statuses</SelectItem>
-            {['new', 'contacted', 'in_progress', 'closed'].map((status) => (
+            {['new', 'contacted', 'closed'].map((status) => (
               <SelectItem key={status} value={status}>
-                {status}
+                {status.replace('_', ' ')}
               </SelectItem>
             ))}
           </SelectContent>
@@ -144,7 +144,7 @@ export default function AdminInquiries() {
                       </div>
                     </td>
                     <td className="px-4 py-3.5 text-slate-400 text-sm hidden lg:table-cell">
-                      {inquiry.current_status || '—'}
+                      {inquiry.current_status ? inquiry.current_status.replace('_', ' ') : '—'}
                     </td>
                     <td className="px-4 py-3.5">
                       <span
@@ -152,7 +152,7 @@ export default function AdminInquiries() {
                           STATUS_STYLES[inquiry.status] || ''
                         }`}
                       >
-                        {inquiry.status}
+                        {inquiry.status ? inquiry.status.replace('_', ' ') : ''}
                       </span>
                     </td>
                     <td className="px-4 py-3.5">
@@ -213,7 +213,7 @@ export default function AdminInquiries() {
               <InfoRow label="WhatsApp" value={selected.whatsapp} />
               <InfoRow label="Villa Location" value={selected.villa_location} />
               <InfoRow label="Bedrooms" value={selected.bedroom_count} />
-              <InfoRow label="Current Status" value={selected.current_status} />
+              <InfoRow label="Current Status" value={selected.current_status?.replace('_', ' ')} />
               {selected.message && (
                 <InfoRow label="Message" value={selected.message} />
               )}
@@ -232,10 +232,10 @@ export default function AdminInquiries() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-slate-800 border-slate-700 text-white">
-                    {['new', 'contacted', 'in_progress', 'closed'].map(
+                    {['new', 'contacted', 'closed'].map(
                       (status) => (
                         <SelectItem key={status} value={status}>
-                          {status}
+                          {status.replace('_', ' ')}
                         </SelectItem>
                       )
                     )}
