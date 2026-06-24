@@ -1,0 +1,66 @@
+{
+  "name": "VillaAssessment",
+  "type": "object",
+  "properties": {
+    "owner_name": {
+      "type": "string",
+      "description": "Villa owner name"
+    },
+    "contact": {
+      "type": "string",
+      "description": "Contact number or email"
+    },
+    "villa_name": {
+      "type": "string",
+      "description": "Name of the villa"
+    },
+    "location": {
+      "type": "string",
+      "description": "Villa location in Bali"
+    },
+    "bedrooms": {
+      "type": "number",
+      "description": "Number of bedrooms"
+    },
+    "current_operation": {
+      "type": "string",
+      "enum": [
+        "self_managed",
+        "managed_by_agent",
+        "not_operational",
+        "under_renovation"
+      ],
+      "description": "Current operation status"
+    },
+    "rental_platform": {
+      "type": "string",
+      "description": "Current rental platforms used"
+    },
+    "average_occupancy": {
+      "type": "string",
+      "description": "Average occupancy rate"
+    },
+    "monthly_revenue": {
+      "type": "string",
+      "description": "Average monthly revenue"
+    },
+    "main_problem": {
+      "type": "string",
+      "description": "Main challenges or problems"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "reviewed",
+        "scheduled",
+        "completed"
+      ],
+      "default": "pending"
+    }
+  },
+  "required": [
+    "owner_name",
+    "contact"
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "name": "BookingInquiry",
+  "type": "object",
+  "properties": {
+    "villa_id": {
+      "type": "string",
+      "description": "Reference to VillaListing ID"
+    },
+    "villa_name": {
+      "type": "string",
+      "description": "Name of the villa (denormalized)"
+    },
+    "guest_name": {
+      "type": "string",
+      "description": "Full name of the guest"
+    },
+    "email": {
+      "type": "string",
+      "description": "Guest email address"
+    },
+    "whatsapp": {
+      "type": "string",
+      "description": "Guest WhatsApp number"
+    },
+    "check_in": {
+      "type": "string",
+      "format": "date",
+      "description": "Check-in date"
+    },
+    "check_out": {
+      "type": "string",
+      "format": "date",
+      "description": "Check-out date"
+    },
+    "guests": {
+      "type": "number",
+      "description": "Number of guests"
+    },
+    "special_requests": {
+      "type": "string",
+      "description": "Special requests or notes"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "new",
+        "contacted",
+        "confirmed",
+        "cancelled"
+      ],
+      "default": "new",
+      "description": "Booking inquiry status"
+    }
+  },
+  "required": [
+    "guest_name",
+    "email",
+    "villa_name"
+  ]
+}

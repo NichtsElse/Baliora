@@ -1,0 +1,86 @@
+/**
+ * Purpose: Sends consultation and booking auto-replies for BALIORA lead forms.
+ * Used by: frontend contact and booking inquiry forms deployed on Vercel.
+ * Main dependencies: EmailJS REST API, sendLeadConfig helpers, and Vercel Node.js runtime.
+ * Public functions: default Vercel API handler.
+ * Side effects: Sends outbound emails through EmailJS.
+ */
+import {
+  buildAutoReplyTemplateParams,
+  getLeadPayload,
+} from './utils/sendLeadConfig.js';
+
+const EMAILJS_ENDPOINT = 'https://api.emailjs.com/api/v1.0/email/send';
+
+const sendEmailJsMessage = async ({
+  serviceId,
+  templateId,
+  publicKey,
+  privateKey,
+  templateParams,
+}) => {
+  const emailResponse = await fetch(EMAILJS_ENDPOINT, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      service_id: serviceId,
+      template_id: templateId,
+      user_id: publicKey,
+      accessToken: privateKey,
+      template_params: templateParams,
+    }),
+  });
+
+  if (emailResponse.ok) {
+    return;
+  }
+
+  const errorText = await emailResponse.text().catch(() => 'Unknown EmailJS error');
+  throw new Error(errorText || 'EmailJS send failed');
+};
+
+export default async function handler(request, response) {
+  if (request.method !== 'POST') {
+    response.setHeader('Allow', 'POST');
+    return response.status(405).json({ ok: false, message: 'Method not allowed' });
+  }
+
+  const serviceId = process.env.EMAILJS_SERVICE_ID;
+  const publicKey = process.env.EMAILJS_PUBLIC_KEY;
+  const privateKey = process.env.EMAILJS_PRIVATE_KEY;
+  const consultationTemplateId = process.env.EMAILJS_CONSULTATION_TEMPLATE_ID;
+  const bookingTemplateId = process.env.EMAILJS_BOOKING_TEMPLATE_ID;
+
+  if (!serviceId || !publicKey || !privateKey || !consultationTemplateId || !bookingTemplateId) {
+    return response.status(202).json({
+      ok: false,
+      skipped: true,
+      message: 'Email delivery is not configured yet. Set the EmailJS environment variables in Vercel.',
+    });
+  }
+
+  const leadPayload = getLeadPayload(request.body || {});
+
+  if (!leadPayload) {
+    return response.status(400).json({ ok: false, message: 'Unsupported lead type' });
+  }
+
+  try {
+    if (request.body?.email) {
+      const templateId = request.body.type === 'booking' ? bookingTemplateId : consultationTemplateId;
+      await sendEmailJsMessage({
+        serviceId,
+        templateId,
+        publicKey,
+        privateKey,
+        templateParams: buildAutoReplyTemplateParams(leadPayload, request.body || {}),
+      });
+    }
+
+    return response.status(200).json({ ok: true });
+  } catch (error) {
+    return response.status(500).json({ ok: false, message: error.message || 'Unexpected email error' });
+  }
+}

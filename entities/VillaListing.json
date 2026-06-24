@@ -1,0 +1,109 @@
+{
+  "name": "VillaListing",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Villa name"
+    },
+    "slug": {
+      "type": "string",
+      "description": "URL-friendly identifier"
+    },
+    "location": {
+      "type": "string",
+      "enum": [
+        "Canggu",
+        "Seminyak",
+        "Uluwatu",
+        "Ubud",
+        "Sanur",
+        "Nusa Dua"
+      ],
+      "description": "Area in Bali"
+    },
+    "address_area": {
+      "type": "string",
+      "description": "More specific address or neighborhood"
+    },
+    "bedrooms": {
+      "type": "number",
+      "description": "Number of bedrooms"
+    },
+    "bathrooms": {
+      "type": "number",
+      "description": "Number of bathrooms"
+    },
+    "max_guests": {
+      "type": "number",
+      "description": "Maximum guest capacity"
+    },
+    "price_per_night": {
+      "type": "number",
+      "description": "Starting price per night in USD"
+    },
+    "short_description": {
+      "type": "string",
+      "description": "Brief summary for villa cards"
+    },
+    "full_description": {
+      "type": "string",
+      "description": "Full villa description for detail page"
+    },
+    "amenities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of villa amenities"
+    },
+    "image_urls": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Array of image URLs"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "available",
+        "hidden",
+        "maintenance"
+      ],
+      "default": "available",
+      "description": "Listing status"
+    },
+    "rating": {
+      "type": "number",
+      "description": "Average rating out of 5"
+    },
+    "review_count": {
+      "type": "number",
+      "description": "Number of reviews"
+    },
+    "house_rules": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of house rules"
+    },
+    "highlight_tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Featured highlight tags like honeymoon, family, events"
+    }
+  },
+  "required": [
+    "name",
+    "slug",
+    "location",
+    "bedrooms",
+    "bathrooms",
+    "max_guests",
+    "price_per_night"
+  ]
+}

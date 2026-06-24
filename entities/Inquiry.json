@@ -1,0 +1,55 @@
+{
+  "name": "Inquiry",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Full name of the villa owner"
+    },
+    "email": {
+      "type": "string",
+      "description": "Email address"
+    },
+    "whatsapp": {
+      "type": "string",
+      "description": "WhatsApp number"
+    },
+    "villa_location": {
+      "type": "string",
+      "description": "Location of the villa in Bali"
+    },
+    "bedroom_count": {
+      "type": "number",
+      "description": "Number of bedrooms"
+    },
+    "current_status": {
+      "type": "string",
+      "enum": [
+        "private_use",
+        "rental",
+        "under_renovation",
+        "new_investment"
+      ],
+      "description": "Current villa status"
+    },
+    "message": {
+      "type": "string",
+      "description": "Additional message from owner"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "new",
+        "contacted",
+        "in_progress",
+        "closed"
+      ],
+      "default": "new",
+      "description": "Inquiry status"
+    }
+  },
+  "required": [
+    "name",
+    "email"
+  ]
+}

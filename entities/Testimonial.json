@@ -1,0 +1,40 @@
+{
+  "name": "Testimonial",
+  "type": "object",
+  "properties": {
+    "owner_name": {
+      "type": "string"
+    },
+    "country": {
+      "type": "string"
+    },
+    "villa_name": {
+      "type": "string"
+    },
+    "review": {
+      "type": "string"
+    },
+    "rating": {
+      "type": "number"
+    },
+    "photo_url": {
+      "type": "string"
+    },
+    "is_featured": {
+      "type": "boolean",
+      "default": false
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "hidden"
+      ],
+      "default": "active"
+    }
+  },
+  "required": [
+    "owner_name",
+    "review"
+  ]
+}
