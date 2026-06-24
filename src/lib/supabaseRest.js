@@ -83,7 +83,10 @@ export const insertSupabaseRow = async (tableName, payload) => {
     return null;
   }
 
-  const publicTables = ['booking_inquiries', 'owner_inquiries', 'villa_assessments'];
+  const publicTables = [
+    'booking_inquiries', 'owner_inquiries', 'villa_assessments',
+    'ba_booking_inquiries', 'ba_owner_inquiries', 'ba_villa_assessments'
+  ];
   const preferHeader = publicTables.includes(tableName) ? 'return=minimal' : 'return=representation';
 
   const response = await fetch(`${SUPABASE_URL}/rest/v1/${tableName}`, {

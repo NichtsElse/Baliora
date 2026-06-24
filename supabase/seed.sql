@@ -1,10 +1,10 @@
 -- Purpose: Seeds the BALIORA Supabase schema with demo data for local-to-Supabase migration testing.
 -- Used by: Supabase SQL editor after the schema migration has been created.
 -- Main dependencies: the public tables defined in supabase/migrations/001_init.sql.
--- Public objects: demo app users, villas, inquiries, owners, blog posts, faqs, testimonials, website settings, and activity logs.
+-- Public objects: demo app users, villas, inquiries, owners, blog posts, ba_faqs, ba_testimonials, website settings, and activity logs.
 -- Side effects: Inserts or upserts demo rows into the public schema.
 
-insert into public.app_users (id, email, full_name, role, contact_number, status)
+insert into public.ba_app_users (id, email, full_name, role, contact_number, status)
 values
   ('11111111-1111-1111-1111-111111111111', 'admin@baliora.local', 'BALIORA Admin', 'admin', '+62 812-3456-7890', 'active'),
   ('22222222-2222-2222-2222-222222222222', 'villa.manager@baliora.local', 'Villa Manager', 'villa_manager', '+62 812-3456-7891', 'active'),
@@ -18,7 +18,7 @@ on conflict (email) do update set
   status = excluded.status,
   updated_at = now();
 
-insert into public.villa_listings (
+insert into public.ba_villa_listings (
   id, slug, name, location, address_area, bedrooms, bathrooms, max_guests, price_per_night,
   short_description, full_description, amenities, image_urls, house_rules, highlight_tags,
   status, rating, review_count
@@ -88,7 +88,7 @@ on conflict (slug) do update set
   review_count = excluded.review_count,
   updated_at = now();
 
-insert into public.owner_inquiries (
+insert into public.ba_owner_inquiries (
   id, name, email, whatsapp, villa_location, bedroom_count, current_status, message, status, source
 )
 values
@@ -116,7 +116,7 @@ on conflict (id) do update set
   source = excluded.source,
   updated_at = now();
 
-insert into public.booking_inquiries (
+insert into public.ba_booking_inquiries (
   id, villa_id, villa_name, guest_name, email, whatsapp, check_in, check_out, guests, special_requests, status, source
 )
 values
@@ -148,7 +148,7 @@ on conflict (id) do update set
   source = excluded.source,
   updated_at = now();
 
-insert into public.villa_assessments (
+insert into public.ba_villa_assessments (
   id, owner_name, contact, villa_name, location, bedrooms, current_operation, rental_platform, average_occupancy, monthly_revenue, main_problem, status, source
 )
 values
@@ -182,7 +182,7 @@ on conflict (id) do update set
   source = excluded.source,
   updated_at = now();
 
-insert into public.villa_owners (
+insert into public.ba_villa_owners (
   id, name, email, whatsapp, nationality, contract_start, contract_end, revenue_share_percent, management_fee_type, notes, status
 )
 values
@@ -211,7 +211,7 @@ on conflict (email) do update set
   status = excluded.status,
   updated_at = now();
 
-insert into public.blog_posts (
+insert into public.ba_blog_posts (
   id, slug, title, excerpt, content, featured_image, category, tags, status, seo_title, seo_description, author, published_at
 )
 values
@@ -266,7 +266,7 @@ on conflict (slug) do update set
   published_at = excluded.published_at,
   updated_at = now();
 
-insert into public.faqs (id, question, answer, category, sort_order, status)
+insert into public.ba_faqs (id, question, answer, category, sort_order, status)
 values
   (
     '70000000-0000-0000-0000-000000000001',
@@ -300,7 +300,7 @@ on conflict (id) do update set
   status = excluded.status,
   updated_at = now();
 
-insert into public.testimonials (id, owner_name, country, villa_name, review, rating, photo_url, sort_order, is_featured, status)
+insert into public.ba_testimonials (id, owner_name, country, villa_name, review, rating, photo_url, sort_order, is_featured, status)
 values
   (
     '80000000-0000-0000-0000-000000000001',
@@ -350,7 +350,7 @@ on conflict (id) do update set
   status = excluded.status,
   updated_at = now();
 
-insert into public.website_settings (key, value, label, category, type)
+insert into public.ba_website_settings (key, value, label, category, type)
 values
   ('company_name', 'BALIORA', 'Company Name', 'Company', 'text'),
   ('company_tagline', 'End-to-end villa management in Bali. Protecting your asset, elevating your returns.', 'Company Tagline', 'Company', 'text'),
@@ -386,7 +386,7 @@ on conflict (key) do update set
   type = excluded.type,
   updated_at = now();
 
-insert into public.activity_logs (id, entity_type, action, details, user_name)
+insert into public.ba_activity_logs (id, entity_type, action, details, user_name)
 values
   (
     '90000000-0000-0000-0000-000000000001',
