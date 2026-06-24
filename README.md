@@ -22,7 +22,7 @@ Hosted-platform runtime dependencies have been replaced with local adapters:
 
 - auth uses browser `localStorage`
 - public entities use local persistence helpers
-- admin CRUD uses the local data client in [src/api/localClientCore.js](D:/magang/Baliora/src/api/localClientCore.js)
+- admin CRUD uses the local data client in [src/api/localClientCore.js](src/api/localClientCore.js)
 - image uploads in admin are stored locally as data URLs
 - public content reads from admin-managed local records when available
 
@@ -32,33 +32,33 @@ That means the app still works even when Supabase is not configured.
 
 ### Public app
 
-- [src/api/localClient.js](D:/magang/Baliora/src/api/localClient.js)
+- [src/api/localClient.js](src/api/localClient.js)
   Local app client for auth and public entities.
-- [src/lib/localAuth.js](D:/magang/Baliora/src/lib/localAuth.js)
+- [src/lib/localAuth.js](src/lib/localAuth.js)
   Local email/password auth, OTP verification, demo Google login, and password reset.
-- [src/lib/localEntities.js](D:/magang/Baliora/src/lib/localEntities.js)
+- [src/lib/localEntities.js](src/lib/localEntities.js)
   Local persistence for villas, booking inquiries, owner inquiries, and assessments.
-- [src/lib/siteContent.js](D:/magang/Baliora/src/lib/siteContent.js)
+- [src/lib/siteContent.js](src/lib/siteContent.js)
   Reads admin-managed website settings, testimonials, FAQs, and service pillars for the public site.
 
 ### Admin app
 
-- [src/api/localClientCore.js](D:/magang/Baliora/src/api/localClientCore.js)
+- [src/api/localClientCore.js](src/api/localClientCore.js)
   Local data client for admin pages and shared entities.
-- [src/components/admin/AdminLayout.jsx](D:/magang/Baliora/src/components/admin/AdminLayout.jsx)
+- [src/components/admin/AdminLayout.jsx](src/components/admin/AdminLayout.jsx)
   Admin shell and navigation.
-- [src/pages/admin](D:/magang/Baliora/src/pages/admin)
+- [src/pages/admin](src/pages/admin)
   Admin dashboards, content editors, and CRUD screens.
 
 ### Serverless and remote sync
 
-- [api/send-lead.js](D:/magang/Baliora/api/send-lead.js)
+- [api/send-lead.js](api/send-lead.js)
   Vercel serverless function that sends booking and consultation auto-replies through EmailJS.
-- [api/sendLeadConfig.js](D:/magang/Baliora/api/sendLeadConfig.js)
+- [api/utils/sendLeadConfig.js](api/utils/sendLeadConfig.js)
   Shared payload builder for booking and consultation auto-reply templates.
-- [src/lib/sendLeadNotification.js](D:/magang/Baliora/src/lib/sendLeadNotification.js)
+- [src/lib/sendLeadNotification.js](src/lib/sendLeadNotification.js)
   Frontend helper that posts lead data to `/api/send-lead`.
-- [src/lib/supabaseRest.js](D:/magang/Baliora/src/lib/supabaseRest.js)
+- [src/lib/supabaseRest.js](src/lib/supabaseRest.js)
   Optional Supabase REST helpers for insert, list, upsert, update, and delete.
 
 ## Tech Stack
@@ -160,20 +160,21 @@ Notes:
 
 ## Supabase Tables
 
-The starter schema lives at [supabase/schema.sql](D:/magang/Baliora/supabase/schema.sql).
+The starter schema lives at [supabase/schema.sql](supabase/schema.sql).
 
-It currently includes:
+It currently includes (prefixed with `ba_` to match the custom schema):
 
-- `inquiries`
-- `villa_assessments`
-- `booking_inquiries`
-- `villa_listings`
-- `villa_owners`
-- `blog_posts`
-- `faqs`
-- `testimonials`
-- `website_settings`
-- `activity_logs`
+- `ba_owner_inquiries`
+- `ba_villa_assessments`
+- `ba_booking_inquiries`
+- `ba_villa_listings`
+- `ba_villa_owners`
+- `ba_blog_posts`
+- `ba_faqs`
+- `ba_testimonials`
+- `ba_website_settings`
+- `ba_activity_logs`
+- `ba_app_users`
 
 Important note:
 
@@ -185,18 +186,18 @@ Important note:
 ### `/contact`
 
 - saves owner inquiry locally through `localEntities.Inquiry.create()`
-- optionally inserts into Supabase `inquiries`
+- optionally inserts into Supabase `ba_owner_inquiries`
 - sends auto-reply to the user email
 
 ### `/assessment`
 
 - saves villa assessment locally through `localEntities.VillaAssessment.create()`
-- optionally inserts into Supabase `villa_assessments`
+- optionally inserts into Supabase `ba_villa_assessments`
 
 ### `/villas/:slug`
 
 - saves booking inquiry locally through `localEntities.BookingInquiry.create()`
-- optionally inserts into Supabase `booking_inquiries`
+- optionally inserts into Supabase `ba_booking_inquiries`
 - sends auto-reply to the guest email
 
 ### EmailJS template variables
@@ -245,7 +246,7 @@ The auth flow is integrated with Supabase Auth when configured:
 - **Login**: Authenticates users against Supabase Auth.
 - **Google Sign-In**: Fully integrated with Supabase OAuth. Users can sign in using their Google account once Google Auth Provider is configured in the Supabase Dashboard.
 - **Forgot Password**: Requests a reset password link from Supabase Auth.
-- **User profiles**: Profiles are mirrored to the `app_users` table in the database to manage application roles and statuses.
+- **User profiles**: Profiles are mirrored to the `ba_app_users` table in the database to manage application roles and statuses.
 
 ### Google OAuth Configuration Setup
 
@@ -358,13 +359,13 @@ npm run test
 
 Project-owned markdown currently lives in:
 
-- [README.md](D:/magang/Baliora/README.md)
+- [README.md](README.md)
 
 Most other `.md` files in the repository come from `node_modules` and are not part of the project documentation.
 
 ## Recommended Next Steps
 
-1. configure Supabase and run [schema.sql](D:/magang/Baliora/supabase/schema.sql)
+1. configure Supabase and run [schema.sql](supabase/schema.sql)
 2. configure EmailJS in Vercel
 3. test lead delivery from deployed forms
 4. tighten Supabase RLS before production use
