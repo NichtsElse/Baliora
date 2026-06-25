@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, Navigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { localClient } from "@/api/localClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -60,14 +60,6 @@ export default function AdminLogin() {
       icon={ShieldCheck}
       title="Admin Portal"
       subtitle="Authorized access only"
-      footer={
-        <div className="flex flex-col items-center gap-2">
-          <span>Not an administrator?</span>
-          <Link to="/login" className="text-primary font-medium hover:underline">
-            Return to Participant Login
-          </Link>
-        </div>
-      }
     >
       {error && (
         <div className="mb-4 p-3 rounded-lg bg-destructive/10 text-destructive text-sm">

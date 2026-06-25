@@ -253,15 +253,18 @@ Current behavior:
 - local changes show immediately on the same browser profile
 - if Supabase is configured, supported admin CRUD also attempts to sync remotely
 
-## Authentication Notes
+## Authentication & Authorization Notes
 
-The auth flow is integrated with Supabase Auth when configured:
+Authentication is strictly isolated for the **Admin Portal** (`/admin/login`):
 
-- **Register**: Registers a new user directly in Supabase Auth using the standard email confirmation flow. Once the confirmation link sent to the user's email is clicked, the account is activated.
-- **Login**: Authenticates users against Supabase Auth.
-- **Google Sign-In**: Fully integrated with Supabase OAuth. Users can sign in using their Google account once Google Auth Provider is configured in the Supabase Dashboard.
-- **Forgot Password**: Requests a reset password link from Supabase Auth.
-- **User profiles**: Profiles are mirrored to the `ba_app_users` table in the database to manage application roles and statuses.
+- **Public Visitors**: Visitors do not require any login. All marketing, listing, FAQ, blog, contact, and assessment pages are fully public and accessible without authentication.
+- **Admin & Staff Login**: Access to `/admin/*` requires logging in as an administrator or staff.
+- **Role Gating**:
+  - The standard login page (`/login`) is disabled and redirects automatically to `/admin/login`.
+  - If a user with standard `'user'` privileges logs in at `/admin/login`, they will be blocked, logged out, and see an error message.
+  - If an administrative user (`admin`, `villa_manager`, `reservation_staff`, `content_manager`) logs in, they are redirected to `/admin`.
+- **Google Sign-In**: Supported for team members once Google OAuth is configured in the Supabase Dashboard.
+- **User Profiles**: Mapped to the `ba_app_users` table in Supabase.
 
 ### Google OAuth Configuration Setup
 

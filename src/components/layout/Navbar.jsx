@@ -100,7 +100,7 @@ export default function Navbar() {
                   {btn.label}
                 </Link>
               ))}
-              {isAuthenticated ? (
+              {isAuthenticated && (
                 <div className="relative">
                   <button
                     type="button"
@@ -160,10 +160,6 @@ export default function Navbar() {
                     </div>
                   )}
                 </div>
-              ) : (
-                <Link to="/login" className={renderActionClass('outline')}>
-                  Login
-                </Link>
               )}
             </div>
 
@@ -199,7 +195,7 @@ export default function Navbar() {
                 </Link>
               ))}
               <div className="w-12 h-px bg-primary/30 my-4" />
-              {isAuthenticated ? (
+              {isAuthenticated && (
                 <>
                   <Link
                     to="/profile"
@@ -223,13 +219,6 @@ export default function Navbar() {
                     Logout
                   </button>
                 </>
-              ) : (
-                <Link
-                  to="/login"
-                  className="rounded-full font-body text-sm tracking-wide px-8 py-3 border border-primary text-primary"
-                >
-                  Login
-                </Link>
               )}
               {ctaButtons.map((btn, idx) => (
                 <Link

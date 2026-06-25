@@ -84,31 +84,38 @@ const AuthenticatedApp = () => {
 
   return (
     <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/login" element={<Navigate to="/admin/login" replace />} />
+      <Route path="/register" element={<Navigate to="/home" replace />} />
+      <Route path="/forgot-password" element={<Navigate to="/admin/login" replace />} />
+      <Route path="/reset-password" element={<Navigate to="/admin/login" replace />} />
       <Route path="/admin/login" element={<AdminLogin />} />
       <Route path="/" element={<RootRedirect />} />
-      <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
+      
+      {/* Public Pages */}
+      <Route element={<SiteLayout />}>
+        <Route path="/home" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/services" element={<Services />} />
+        <Route path="/why-baliora" element={<WhyBaliora />} />
+        <Route path="/how-it-works" element={<HowItWorks />} />
+        <Route path="/faq" element={<FAQ />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/assessment" element={<Assessment />} />
+        <Route path="/villas" element={<Villas />} />
+        <Route path="/villas/:slug" element={<VillaDetail />} />
+        <Route path="/blog" element={<Blog />} />
+        <Route path="/blog/:slug" element={<BlogPost />} />
+      </Route>
+
+      {/* Protected User Pages */}
+      <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/admin/login" replace />} />}>
         <Route element={<SiteLayout />}>
-          <Route path="/home" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/services" element={<Services />} />
-          <Route path="/why-baliora" element={<WhyBaliora />} />
-          <Route path="/how-it-works" element={<HowItWorks />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/faq" element={<FAQ />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/assessment" element={<Assessment />} />
-          <Route path="/villas" element={<Villas />} />
-          <Route path="/villas/:slug" element={<VillaDetail />} />
-          <Route path="/blog" element={<Blog />} />
-          <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/profile" element={<Profile />} />
         </Route>
       </Route>
       
+      {/* Protected Admin Pages */}
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/admin/login" replace />} />}>
         <Route element={<AdminLayout />}>
           <Route path="/admin" element={<AdminDashboard />} />
@@ -161,13 +168,7 @@ const AuthenticatedApp = () => {
 };
 
 const RootRedirect = () => {
-  const { isAuthenticated, isLoadingAuth } = useAuth();
-
-  if (isLoadingAuth) {
-    return null;
-  }
-
-  return <Navigate to={isAuthenticated ? '/home' : '/login'} replace />;
+  return <Navigate to="/home" replace />;
 };
 
 function App() {
