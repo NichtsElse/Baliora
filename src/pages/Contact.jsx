@@ -283,6 +283,7 @@ export default function Contact() {
                   <p className="font-body text-sm text-muted-foreground leading-relaxed">
                     Not sure where to start? We offer a complimentary villa assessment to evaluate your property and discuss management opportunities.
                   </p>
+                  {/* Temporarily hidden since Assessment is not ready
                   <a
                     href="/assessment"
                     className="mt-4 inline-flex items-center gap-2 rounded-full border border-primary px-5 py-2.5 font-body text-sm tracking-wide text-primary transition-all duration-300 hover:bg-primary hover:text-primary-foreground"
@@ -290,6 +291,7 @@ export default function Contact() {
                     Request Villa Assessment
                     <ArrowRight size={14} />
                   </a>
+                  */}
                 </div>
               </div>
             </motion.div>
