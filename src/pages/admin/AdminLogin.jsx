@@ -8,6 +8,8 @@ import { Eye, EyeOff, ShieldCheck, Mail, Lock, Loader2 } from "lucide-react";
 import AuthLayout from "@/components/AuthLayout";
 import { useAuth } from "@/lib/AuthContext";
 
+import { useToast } from "@/components/ui/use-toast";
+
 export default function AdminLogin() {
   const { isAuthenticated, user, isLoadingAuth } = useAuth();
   const [email, setEmail] = useState("");
@@ -15,6 +17,7 @@ export default function AdminLogin() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const { toast } = useToast();
 
   // If already logged in and it's not loading, redirect to admin
   if (!isLoadingAuth && isAuthenticated) {
@@ -26,10 +29,27 @@ export default function AdminLogin() {
     setError("");
     setLoading(true);
     try {
-      await localClient.auth.loginViaEmailPassword(email, password);
+      const user = await localClient.auth.loginViaEmailPassword(email, password);
+      if (user && user.role === 'user') {
+        await localClient.auth.logout();
+        const errMsg = "Pengguna biasa tidak diizinkan masuk melalui halaman ini. Silakan gunakan Halaman Login Utama.";
+        setError(errMsg);
+        toast({
+          title: "Login Gagal",
+          description: errMsg,
+          variant: "destructive",
+        });
+        return;
+      }
       window.location.href = new URLSearchParams(window.location.search).get("from_url") || "/admin";
     } catch (err) {
-      setError(err.message || "Invalid email or password");
+      const errMsg = err.message || "Invalid email or password";
+      setError(errMsg);
+      toast({
+        title: "Login Gagal",
+        description: errMsg,
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }

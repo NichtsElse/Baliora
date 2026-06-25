@@ -31,6 +31,7 @@ import AdminSettings from './pages/admin/AdminSettings';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminActivity from './pages/admin/AdminActivity';
 import AdminPlaceholder from './pages/admin/AdminPlaceholder';
+import AdminRoles from './pages/admin/AdminRoles';
 import AdminContentHomepage from './pages/admin/AdminContentHomepage';
 import AdminContentAbout from './pages/admin/AdminContentAbout';
 import AdminContentServices from './pages/admin/AdminContentServices';
@@ -127,7 +128,7 @@ const AuthenticatedApp = () => {
         <Route path="/admin/users" element={<AdminUsers />} />
         <Route path="/admin/activity" element={<AdminActivity />} />
         <Route path="/admin/settings" element={<AdminSettings />} />
-        <Route path="/admin/settings/roles" element={<AdminPlaceholder />} />
+        <Route path="/admin/settings/roles" element={<AdminRoles />} />
         <Route path="/admin/settings/integrations" element={<AdminPlaceholder />} />
         <Route path="/admin/settings/audit" element={<AdminActivity />} />
         <Route path="/admin/content/navbar" element={<AdminContentNavbar />} />

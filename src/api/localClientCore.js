@@ -406,6 +406,28 @@ const buildUserEntity = () => ({
     const sourceRows = remoteRows ?? ensureCollection('User');
     return sortRecords(filterRecords(sourceRows, filters), sortBy).slice(0, limit);
   },
+
+  async update(id, payload) {
+    const records = ensureCollection('User');
+    const existingIndex = records.findIndex(r => r.id === id);
+    if (existingIndex === -1) {
+      throw new Error('User not found');
+    }
+    const updatedRecord = {
+      ...records[existingIndex],
+      ...payload,
+      updated_date: new Date().toISOString(),
+    };
+    records[existingIndex] = updatedRecord;
+    saveCollection('User', records);
+    await syncRemoteUpdate('User', id, updatedRecord);
+    logActivity({
+      entityType: 'User',
+      action: 'User updated',
+      details: `${updatedRecord.email || id} - role: ${updatedRecord.role}`,
+    });
+    return updatedRecord;
+  },
 });
 
 export const localClient = {

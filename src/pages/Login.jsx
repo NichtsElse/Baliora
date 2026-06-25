@@ -17,22 +17,42 @@ import GoogleIcon from "@/components/GoogleIcon";
 
 
 
+import { useToast } from "@/components/ui/use-toast";
+
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const { toast } = useToast();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
     try {
-      await localClient.auth.loginViaEmailPassword(email, password);
+      const user = await localClient.auth.loginViaEmailPassword(email, password);
+      if (user && user.role !== 'user') {
+        await localClient.auth.logout();
+        const errMsg = "Admin/Staff tidak diizinkan masuk melalui halaman ini. Silakan gunakan Halaman Login Admin.";
+        setError(errMsg);
+        toast({
+          title: "Login Gagal",
+          description: errMsg,
+          variant: "destructive",
+        });
+        return;
+      }
       window.location.href = new URLSearchParams(window.location.search).get("from_url") || "/home";
     } catch (err) {
-      setError(err.message || "Invalid email or password");
+      const errMsg = err.message || "Invalid email or password";
+      setError(errMsg);
+      toast({
+        title: "Login Gagal",
+        description: errMsg,
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
