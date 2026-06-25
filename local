@@ -1,0 +1,15 @@
+# BALIORA local environment
+# Used by: Vite app, Supabase REST helper, and EmailJS lead notifications.
+# Main dependencies: VITE_SUPABASE_* for local demo storage sync and EMAILJS_* for form emails.
+# Side effects: Loads local secrets at dev/build time only.
+
+VITE_SUPABASE_URL=https://ovhknejyttlxokirwkps.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92aGtuZWp5dHRseG9raXJ3a3BzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIwNjcxNjQsImV4cCI6MjA5NzY0MzE2NH0.hPNjPWxjuRyWxG0laXk4_IqZn3NXPh-ml32Lso5HlKs
+EMAILJS_SERVICE_ID=service_ajp81e8
+EMAILJS_PUBLIC_KEY=XNux3_bgnpLnSm8TU
+EMAILJS_PRIVATE_KEY=r3CyDzZhE5nLR5N4dFMOH
+EMAILJS_CONSULTATION_TEMPLATE_ID=template_9ztsb6v
+EMAILJS_BOOKING_TEMPLATE_ID=template_nvpkgni
+LEADS_TO_EMAIL=uwildan544@gmail.com
+# Keep this secret out of the browser bundle; use it only in serverless/Vercel env settings.
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92aGtuZWp5dHRseG9raXJ3a3BzIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MjA2NzE2NCwiZXhwIjoyMDk3NjQzMTY0fQ.vNeLHsOZhWqrjkNo52EOeep1hXFFNmvYEY7VANUQtDM

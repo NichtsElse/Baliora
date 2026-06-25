@@ -430,6 +430,10 @@ export const localClient = {
       activityLabel: 'Owner inquiry',
       createDefaults: { status: 'new' },
     }),
+    VillaAssessment: buildCrudEntity('VillaAssessment', {
+      activityLabel: 'Villa assessment',
+      createDefaults: { status: 'new' },
+    }),
     VillaOwner: buildCrudEntity('VillaOwner', {
       activityLabel: 'Villa owner',
       createDefaults: { status: 'active' },
