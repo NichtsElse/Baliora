@@ -242,7 +242,12 @@ export default function Contact() {
                 <div>
                   <h3 className="font-display text-xl text-foreground mb-6">Get in Touch</h3>
                   <div className="space-y-4">
-                    <a href="mailto:info@v-teki.com" className="flex items-start gap-3 group">
+                    <a 
+                      href={`https://mail.google.com/mail/?view=cm&fs=1&to=info@v-teki.com&su=${encodeURIComponent("Owner Consultation Inquiry")}&body=${encodeURIComponent("Hello Baliora Team,\n\nI would like to discuss about my villa and explore your management services.\n\nName: \nPhone/WhatsApp: \nVilla Location: \nNumber of Bedrooms: \n\nThank you.")}`} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="flex items-start gap-3 group"
+                    >
                       <Mail size={18} className="text-primary mt-0.5" />
                       <div>
                         <p className="font-body text-sm text-foreground group-hover:text-primary transition-colors">info@v-teki.com</p>
