@@ -187,7 +187,8 @@ Important note:
 
 - saves owner inquiry locally through `localEntities.Inquiry.create()`
 - optionally inserts into Supabase `ba_owner_inquiries`
-- sends auto-reply to the user email
+- sends auto-reply to the user email (with a branded HTML table, excluding contact details)
+- sends admin notification to the configured owner email (with all details including contact info)
 
 ### `/assessment`
 
@@ -198,28 +199,42 @@ Important note:
 
 - saves booking inquiry locally through `localEntities.BookingInquiry.create()`
 - optionally inserts into Supabase `ba_booking_inquiries`
-- sends auto-reply to the guest email
+- sends auto-reply to the guest email (with a branded HTML table, excluding contact details)
+- sends admin notification to the configured owner email (with all details including contact info)
 
-### EmailJS template variables
+### EmailJS Setup & Template Variables
 
-Recommended template variables:
+EmailJS uses `api/send-lead.js` to dispatch emails. You should configure the templates on EmailJS with the following variables:
 
-- `to_email`
-- `reply_to`
-- `subject`
-- `heading`
-- `intro`
-- `lead_name`
-- `lead_email`
-- `lead_whatsapp`
-- `villa_name`
-- `check_in`
-- `check_out`
-- `guests`
-- `message`
-- `fields_summary`
+- `to_email` (recipient)
+- `reply_to` (for replying directly to the user/lead)
+- `subject` (email subject line)
+- `heading` (header title inside the email)
+- `intro` (introductory text)
+- `html_content` (the pre-formatted HTML table containing submission details)
+- `fields_summary` (plain-text summary of fields)
 
-## Admin Content Sync
+> [!IMPORTANT]
+> To render the HTML table correctly in your EmailJS template, you **must** use triple curly braces for the `html_content` variable in your EmailJS template editor:
+> ```html
+> {{{html_content}}}
+> ```
+> Using double curly braces `{{html_content}}` will escape the HTML tags and print raw code.
+
+---
+
+## Admin Portal & Dashboards
+
+The admin portal `/admin` has been modernized and standardized.
+
+### Dashboard Core Features
+- **Consistent Layout**: Clean grids, detail drawers, and interactive status filters.
+- **Booking & Inquiry Management (`/admin/bookings` and `/admin/inquiries`)**:
+  - **Interactive Tables**: Clickable rows that slide open a detailed side drawer instead of navigating away.
+  - **Quick Action Triggers**: Inside the drawer, click to directly trigger prefilled **WhatsApp** messages or open a pre-formatted **Gmail Compose window** (`mail.google.com`) with automated email templates (e.g., reply scripts containing client/booking details).
+  - **Pill-shaped Filters**: Select status tabs (e.g., All, Pending, Confirmed, Completed, Cancelled) dynamically with pill buttons.
+
+### Admin Content Sync
 
 The admin portal now updates local content that can appear on the public website.
 

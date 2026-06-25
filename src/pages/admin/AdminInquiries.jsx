@@ -7,7 +7,7 @@
  */
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Search, Eye, Phone, Mail, MapPin, Loader2, X } from 'lucide-react';
+import { Search, Eye, Phone, Mail, MapPin, Loader2, X, AlertCircle, Clock, CheckCircle, PlayCircle } from 'lucide-react';
 import { localClient } from '@/api/localClient';
 import { Input } from '@/components/ui/input';
 import {
@@ -18,6 +18,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
+const STATUS_OPTIONS = ['new', 'contacted', 'in_progress', 'closed'];
+
 const STATUS_STYLES = {
   new: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
   contacted: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
@@ -25,9 +27,16 @@ const STATUS_STYLES = {
   closed: 'bg-slate-500/10 text-slate-400 border-slate-500/20',
 };
 
+const STATUS_ICONS = {
+  new: AlertCircle,
+  contacted: Clock,
+  in_progress: PlayCircle,
+  closed: CheckCircle,
+};
+
 export default function AdminInquiries() {
   const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('');
   const [selected, setSelected] = useState(null);
   const queryClient = useQueryClient();
 
@@ -48,45 +57,68 @@ export default function AdminInquiries() {
       inquiry.name?.toLowerCase().includes(normalizedSearch) ||
       inquiry.email?.toLowerCase().includes(normalizedSearch);
     const matchStatus =
-      statusFilter === 'all' || inquiry.status === statusFilter;
+      !statusFilter || inquiry.status === statusFilter;
     return matchSearch && matchStatus;
   });
+
+  const counts = STATUS_OPTIONS.reduce(
+    (accumulator, status) => ({
+      ...accumulator,
+      [status]: inquiries.filter((inquiry) => inquiry.status === status).length,
+    }),
+    {}
+  );
 
   return (
     <div className="p-6 space-y-5">
       <div>
         <h1 className="text-2xl font-bold text-white">Owner Inquiries</h1>
         <p className="text-slate-500 text-sm mt-1">
-          Management consultation leads from villa owners
+          {inquiries.length} total inquiries
         </p>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-3">
-        <div className="relative flex-1">
-          <Search
-            size={15}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
-          />
-          <Input
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-            placeholder="Search inquiries..."
-            className="pl-9 bg-slate-900 border-slate-700 text-white placeholder:text-slate-500"
-          />
-        </div>
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-40 bg-slate-900 border-slate-700 text-white">
-            <SelectValue placeholder="All Statuses" />
-          </SelectTrigger>
-          <SelectContent className="bg-slate-800 border-slate-700 text-white">
-            <SelectItem value="all">All Statuses</SelectItem>
-            {['new', 'contacted', 'closed'].map((status) => (
-              <SelectItem key={status} value={status}>
-                {status.replace('_', ' ')}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      <div className="flex gap-2 flex-wrap">
+        <button
+          onClick={() => setStatusFilter('')}
+          className={`px-4 py-2 text-sm rounded-lg border transition-colors ${
+            !statusFilter
+              ? 'bg-amber-600 border-amber-600 text-white'
+              : 'border-slate-700 text-slate-400 hover:border-slate-600'
+          }`}
+        >
+          All ({inquiries.length})
+        </button>
+        {STATUS_OPTIONS.map((status) => {
+          const Icon = STATUS_ICONS[status] || AlertCircle;
+          return (
+            <button
+              key={status}
+              onClick={() => setStatusFilter(status)}
+              className={`flex items-center gap-1.5 px-4 py-2 text-sm rounded-lg border transition-colors ${
+                statusFilter === status
+                  ? `${STATUS_STYLES[status]} border-opacity-100`
+                  : 'border-slate-700 text-slate-400 hover:border-slate-600'
+              }`}
+            >
+              <Icon size={13} />
+              {status.replace('_', ' ')} ({counts[status] || 0})
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="relative">
+        <Search
+          size={15}
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
+        />
+        <Input
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
+          placeholder="Search inquiries by owner or email..."
+          className="pl-9 bg-slate-900 border-slate-700 text-white placeholder:text-slate-500"
+        />
       </div>
 
       <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
@@ -124,7 +156,8 @@ export default function AdminInquiries() {
                 {filtered.map((inquiry) => (
                   <tr
                     key={inquiry.id}
-                    className="hover:bg-slate-800/40 transition-colors"
+                    className="hover:bg-slate-800/40 transition-colors cursor-pointer"
+                    onClick={() => setSelected(inquiry)}
                   >
                     <td className="px-5 py-3.5">
                       <p className="text-white text-sm font-medium">
@@ -155,33 +188,16 @@ export default function AdminInquiries() {
                         {inquiry.status ? inquiry.status.replace('_', ' ') : ''}
                       </span>
                     </td>
-                    <td className="px-4 py-3.5">
-                      <div className="flex items-center gap-1">
-                        <button
-                          onClick={() => setSelected(inquiry)}
-                          className="p-1.5 text-slate-500 hover:text-amber-400"
-                        >
-                          <Eye size={15} />
-                        </button>
-                        {inquiry.email && (
-                          <a
-                            href={`mailto:${inquiry.email}`}
-                            className="p-1.5 text-slate-500 hover:text-blue-400"
-                          >
-                            <Mail size={15} />
-                          </a>
-                        )}
-                        {inquiry.whatsapp && (
-                          <a
-                            href={`https://wa.me/${inquiry.whatsapp.replace(/\D/g, '')}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="p-1.5 text-slate-500 hover:text-green-400"
-                          >
-                            <Phone size={15} />
-                          </a>
-                        )}
-                      </div>
+                    <td
+                      className="px-4 py-3.5"
+                      onClick={(event) => event.stopPropagation()}
+                    >
+                      <button
+                        onClick={() => setSelected(inquiry)}
+                        className="p-1.5 text-slate-500 hover:text-amber-400 transition-colors"
+                      >
+                        <Eye size={15} />
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -232,7 +248,7 @@ export default function AdminInquiries() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-slate-800 border-slate-700 text-white">
-                    {['new', 'contacted', 'closed'].map(
+                    {STATUS_OPTIONS.map(
                       (status) => (
                         <SelectItem key={status} value={status}>
                           {status.replace('_', ' ')}
@@ -241,6 +257,31 @@ export default function AdminInquiries() {
                     )}
                   </SelectContent>
                 </Select>
+              </div>
+
+              <div className="flex gap-2 pt-4 border-t border-slate-800 mt-2">
+                {selected.email && (
+                  <a
+                    href={`https://mail.google.com/mail/?view=cm&fs=1&to=${selected.email}&su=${encodeURIComponent('Follow Up: Villa Consultation - BALIORA')}&body=${encodeURIComponent(`Halo ${selected.name},\n\nTerima kasih telah menghubungi BALIORA. Kami telah menerima permintaan konsultasi untuk villa Anda.\n\nKami ingin berdiskusi lebih lanjut mengenai bagaimana layanan kami dapat membantu memaksimalkan potensi properti Anda.\n\nKapan waktu yang paling tepat bagi Anda untuk melakukan panggilan singkat atau meeting?\n\nSalam hangat,\nTim BALIORA`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-sm rounded-lg transition-colors"
+                  >
+                    <Mail size={14} />
+                    Email
+                  </a>
+                )}
+                {selected.whatsapp && (
+                  <a
+                    href={`https://wa.me/${selected.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(`Halo ${selected.name}, kami dari BALIORA. Kami telah menerima permintaan konsultasi Anda untuk villa Anda.`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-green-700/30 hover:bg-green-700/50 border border-green-700/50 text-green-400 text-sm rounded-lg transition-colors"
+                  >
+                    <Phone size={14} />
+                    WhatsApp
+                  </a>
+                )}
               </div>
             </div>
           </div>

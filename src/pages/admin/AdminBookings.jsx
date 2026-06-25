@@ -85,7 +85,9 @@ function BookingDrawer({ booking, onClose, onUpdate }) {
             <div className="space-y-1.5">
               {booking.email && (
                 <a
-                  href={`mailto:${booking.email}`}
+                  href={`https://mail.google.com/mail/?view=cm&fs=1&to=${booking.email}&su=${encodeURIComponent('Follow Up: Villa Booking Inquiry - BALIORA')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="flex items-center gap-2 text-blue-400 text-sm hover:text-blue-300"
                 >
                   <Mail size={14} />
@@ -156,7 +158,9 @@ function BookingDrawer({ booking, onClose, onUpdate }) {
 
           <div className="flex gap-2">
             <a
-              href={`mailto:${booking.email}?subject=Re: Your booking inquiry for ${booking.villa_name}`}
+              href={`https://mail.google.com/mail/?view=cm&fs=1&to=${booking.email}&su=${encodeURIComponent('Re: Your booking inquiry for ' + booking.villa_name)}&body=${encodeURIComponent(`Halo ${booking.guest_name},\n\nTerima kasih telah menghubungi BALIORA. Kami telah menerima permintaan booking Anda untuk ${booking.villa_name}.\n\n[Tambahkan detail ketersediaan / harga di sini]\n\nSalam hangat,\nTim BALIORA`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-sm rounded-lg"
             >
               <Mail size={14} />
