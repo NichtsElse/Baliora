@@ -13,6 +13,11 @@ const formatFieldValue = (value) => {
   return String(value);
 };
 
+const formatStatus = (status) => {
+  if (!status) return '-';
+  return String(status).split(/[-_]/).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+};
+
 const buildFieldSummary = (payload) =>
   Object.entries(payload.fields)
     .map(([label, value]) => `${label}: ${formatFieldValue(value)}`)
@@ -80,12 +85,15 @@ export const buildAutoReplyTemplateParams = (payload, formBody) => ({
   heading: payload.autoReplyHeading,
   intro: payload.autoReplyIntro,
   lead_name: formatFieldValue(formBody.name || formBody.guest_name),
+  name: formatFieldValue(formBody.name || formBody.guest_name),
   email: formatFieldValue(formBody.email),
+  user_email: formatFieldValue(formBody.email),
   whatsapp: formatFieldValue(formBody.whatsapp),
+  phone: formatFieldValue(formBody.whatsapp),
   villa_name: formatFieldValue(formBody.villa_name || formBody.villa_location),
   villa_location: formatFieldValue(formBody.villa_location),
   bedroom_count: formatFieldValue(formBody.bedroom_count),
-  current_status: formatFieldValue(formBody.current_status),
+  current_status: formatStatus(formBody.current_status),
   check_in: formatFieldValue(formBody.check_in),
   check_out: formatFieldValue(formBody.check_out),
   guests: formatFieldValue(formBody.guests),
@@ -104,12 +112,15 @@ export const buildOwnerTemplateParams = (payload, formBody, ownerEmail) => ({
       ? 'Ada inquiry booking baru yang perlu ditinjau.'
       : 'Ada permintaan konsultasi baru yang masuk.',
   lead_name: formatFieldValue(formBody.name || formBody.guest_name),
+  name: formatFieldValue(formBody.name || formBody.guest_name),
   email: formatFieldValue(formBody.email),
+  user_email: formatFieldValue(formBody.email),
   whatsapp: formatFieldValue(formBody.whatsapp),
+  phone: formatFieldValue(formBody.whatsapp),
   villa_name: formatFieldValue(formBody.villa_name || formBody.villa_location),
   villa_location: formatFieldValue(formBody.villa_location),
   bedroom_count: formatFieldValue(formBody.bedroom_count),
-  current_status: formatFieldValue(formBody.current_status),
+  current_status: formatStatus(formBody.current_status),
   check_in: formatFieldValue(formBody.check_in),
   check_out: formatFieldValue(formBody.check_out),
   guests: formatFieldValue(formBody.guests),
