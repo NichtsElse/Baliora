@@ -7,6 +7,7 @@
  */
 import {
   buildAutoReplyTemplateParams,
+  buildOwnerTemplateParams,
   getLeadPayload,
 } from './utils/sendLeadConfig.js';
 
@@ -70,12 +71,24 @@ export default async function handler(request, response) {
   try {
     if (request.body?.email) {
       const templateId = request.body.type === 'booking' ? bookingTemplateId : consultationTemplateId;
+
+      // 1. Send auto-reply to the client/sender
       await sendEmailJsMessage({
         serviceId,
         templateId,
         publicKey,
         privateKey,
         templateParams: buildAutoReplyTemplateParams(leadPayload, request.body || {}),
+      });
+
+      // 2. Send admin notification to the owner/info@v-teki.com
+      const ownerEmail = process.env.LEADS_TO_EMAIL || 'info@v-teki.com';
+      await sendEmailJsMessage({
+        serviceId,
+        templateId,
+        publicKey,
+        privateKey,
+        templateParams: buildOwnerTemplateParams(leadPayload, request.body || {}, ownerEmail),
       });
     }
 

@@ -33,6 +33,7 @@ test('consultation payload exposes owner and auto-reply metadata', () => {
   assert.equal(ownerParams.reply_to, 'rizki@example.com');
   assert.match(ownerParams.html_content, /Permintaan Konsultasi Baru/);
   assert.equal(autoReplyParams.to_email, 'rizki@example.com');
+  assert.equal(autoReplyParams.reply_to, 'info@v-teki.com');
   assert.match(autoReplyParams.html_content, /Terima kasih sudah menghubungi BALIORA/);
 });
 

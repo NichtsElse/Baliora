@@ -103,7 +103,7 @@ export const buildAutoReplyTemplateParams = (payload, formBody) => {
 
   return {
     to_email: formBody.email,
-    reply_to: '',
+    reply_to: process.env.REPLY_TO_EMAIL || process.env.LEADS_TO_EMAIL || 'info@v-teki.com',
     subject: payload.autoReplySubject,
     heading: payload.autoReplyHeading,
     intro: payload.autoReplyIntro,
