@@ -1,7 +1,14 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+const getEnv = (key) => {
+  if (typeof import.meta !== 'undefined' && import.meta.env) {
+    return import.meta.env[key];
+  }
+  return typeof process !== 'undefined' && process.env ? process.env[key] : undefined;
+};
+
+const supabaseUrl = getEnv('VITE_SUPABASE_URL') || '';
+const supabaseAnonKey = getEnv('VITE_SUPABASE_ANON_KEY') || '';
 
 // DEBUG TEMP — hapus setelah fix ditemukan
 console.log('[Supabase Debug] URL set:', !!supabaseUrl, '| KEY set:', !!supabaseAnonKey);

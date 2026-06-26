@@ -6,6 +6,7 @@
  * Side effects: Persists users, pending OTP/reset records, and the active session in browser session storage.
  */
 import { supabase } from './supabaseClient.js';
+import { isSupabaseConfigured } from './supabaseRest.js';
 
 const createMemoryStorage = () => {
   const store = new Map();
@@ -259,45 +260,68 @@ export const localAuth = {
   },
 
   async loginViaEmailPassword(email, password) {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: normalizeEmail(email),
-      password,
-    });
+    const normalizedEmail = normalizeEmail(email);
 
-    if (error) {
-      throw error;
-    }
+    if (isSupabaseConfigured()) {
+      try {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: normalizedEmail,
+          password,
+        });
 
-    const sbUser = data.user;
-    let role = 'user';
-    let fullName = sbUser.user_metadata?.full_name || sbUser.email?.split('@')[0] || 'User';
-    let contactNumber = sbUser.user_metadata?.phone || '';
+        if (error) {
+          throw error;
+        }
 
-    try {
-      const { data: profile } = await supabase
-        .from('ba_app_users')
-        .select('*')
-        .eq('email', sbUser.email)
-        .maybeSingle();
+        const sbUser = data.user;
+        let role = 'user';
+        let fullName = sbUser.user_metadata?.full_name || sbUser.email?.split('@')[0] || 'User';
+        let contactNumber = sbUser.user_metadata?.phone || '';
 
-      if (profile) {
-        role = profile.role;
-        fullName = profile.full_name || fullName;
-        contactNumber = profile.contact_number || contactNumber;
+        try {
+          const { data: profile } = await supabase
+            .from('ba_app_users')
+            .select('*')
+            .eq('email', sbUser.email)
+            .maybeSingle();
+
+          if (profile) {
+            role = profile.role;
+            fullName = profile.full_name || fullName;
+            contactNumber = profile.contact_number || contactNumber;
+          }
+        } catch (dbErr) {
+          console.warn('Could not retrieve user profile role from database:', dbErr);
+        }
+
+        return {
+          id: sbUser.id,
+          email: sbUser.email,
+          role,
+          full_name: fullName,
+          contact_number: contactNumber,
+          provider: 'email',
+          created_date: sbUser.created_at
+        };
+      } catch (err) {
+        if (err.message !== 'Supabase is not configured') {
+          throw err;
+        }
       }
-    } catch (dbErr) {
-      console.warn('Could not retrieve user profile role from database:', dbErr);
     }
 
-    return {
-      id: sbUser.id,
-      email: sbUser.email,
-      role,
-      full_name: fullName,
-      contact_number: contactNumber,
-      provider: 'email',
-      created_date: sbUser.created_at
-    };
+    // Local-only login fallback
+    const users = seedDemoUsersIfNeeded();
+    const user = users.find(
+      (candidate) => candidate.email === normalizedEmail && candidate.password === password,
+    );
+
+    if (!user) {
+      throw createLocalError('Invalid email or password', 400);
+    }
+
+    setActiveSessionForUser(user);
+    return sanitizeUser(user);
   },
 
   async loginWithProvider(provider, redirectPath = '/') {
@@ -347,74 +371,165 @@ export const localAuth = {
   async register({ email, password }) {
     const normalizedEmail = normalizeEmail(email);
 
-    // Call Supabase signUp
-    const { data, error } = await supabase.auth.signUp({
+    if (isSupabaseConfigured()) {
+      try {
+        // Call Supabase signUp
+        const { data, error } = await supabase.auth.signUp({
+          email: normalizedEmail,
+          password,
+        });
+
+        if (error) {
+          throw error;
+        }
+
+        // Try to pre-insert app_user if session is returned (auto-confirmed)
+        if (data.session?.user) {
+          try {
+            await supabase.from('ba_app_users').insert({
+              email: normalizedEmail,
+              full_name: normalizedEmail.split('@')[0],
+              role: 'user',
+              status: 'active',
+            });
+          } catch (dbErr) {
+            console.warn('Failed to insert ba_app_user during auto-confirmed signup:', dbErr);
+          }
+          return { session: data.session, autoConfirmed: true };
+        }
+
+        return { otpRequired: true };
+      } catch (err) {
+        if (err.message !== 'Supabase is not configured') {
+          throw err;
+        }
+      }
+    }
+
+    // Local-only signup fallback
+    const users = seedDemoUsersIfNeeded();
+    if (users.some((candidate) => candidate.email === normalizedEmail)) {
+      throw createLocalError('User already exists', 400);
+    }
+
+    const otpCode = generateCode();
+    const pendingRegistrations = getPendingRegistrations().filter(
+      (candidate) => candidate.email !== normalizedEmail,
+    );
+
+    pendingRegistrations.unshift({
       email: normalizedEmail,
       password,
+      otpCode,
+      created_date: new Date().toISOString(),
     });
 
-    if (error) {
-      throw error;
-    }
+    savePendingRegistrations(pendingRegistrations);
 
-    // Try to pre-insert app_user if session is returned (auto-confirmed)
-    if (data.session?.user) {
-      try {
-        await supabase.from('ba_app_users').insert({
-          email: normalizedEmail,
-          full_name: normalizedEmail.split('@')[0],
-          role: 'user',
-          status: 'active',
-        });
-      } catch (dbErr) {
-        console.warn('Failed to insert ba_app_user during auto-confirmed signup:', dbErr);
-      }
-      return { session: data.session, autoConfirmed: true };
-    }
-
-    return { otpRequired: true };
+    return { otpRequired: true, otpCode };
   },
 
   async verifyOtp({ email, otpCode }) {
     const normalizedEmail = normalizeEmail(email);
-    const { data, error } = await supabase.auth.verifyOtp({
-      email: normalizedEmail,
-      token: otpCode,
-      type: 'signup',
-    });
 
-    if (error) {
-      throw error;
-    }
-
-    if (data.session?.user) {
+    if (isSupabaseConfigured()) {
       try {
-        await supabase.from('ba_app_users').insert({
+        const { data, error } = await supabase.auth.verifyOtp({
           email: normalizedEmail,
-          full_name: normalizedEmail.split('@')[0],
-          role: 'user',
-          status: 'active',
+          token: otpCode,
+          type: 'signup',
         });
-      } catch (dbErr) {
-        console.warn('Failed to insert ba_app_user during OTP verification:', dbErr);
+
+        if (error) {
+          throw error;
+        }
+
+        if (data.session?.user) {
+          try {
+            await supabase.from('ba_app_users').insert({
+              email: normalizedEmail,
+              full_name: normalizedEmail.split('@')[0],
+              role: 'user',
+              status: 'active',
+            });
+          } catch (dbErr) {
+            console.warn('Failed to insert ba_app_user during OTP verification:', dbErr);
+          }
+        }
+
+        return { access_token: data.session?.access_token };
+      } catch (err) {
+        if (err.message !== 'Supabase is not configured') {
+          throw err;
+        }
       }
     }
 
-    return { access_token: data.session?.access_token };
+    // Local-only OTP verification fallback
+    const pendingRegistrations = getPendingRegistrations();
+    const record = pendingRegistrations.find(
+      (candidate) => candidate.email === normalizedEmail && candidate.otpCode === otpCode,
+    );
+
+    if (!record) {
+      throw createLocalError('Invalid or expired OTP', 400);
+    }
+
+    const users = seedDemoUsersIfNeeded();
+    const newUser = {
+      id: generateToken('user'),
+      email: normalizedEmail,
+      password: record.password,
+      role: 'user',
+      full_name: normalizedEmail.split('@')[0],
+      created_date: new Date().toISOString(),
+    };
+
+    saveUsers([newUser, ...users]);
+    savePendingRegistrations(
+      pendingRegistrations.filter((candidate) => candidate.email !== normalizedEmail),
+    );
+
+    const accessToken = setActiveSessionForUser(newUser);
+    return { access_token: accessToken };
   },
 
   async resendOtp(email) {
     const normalizedEmail = normalizeEmail(email);
-    const { error } = await supabase.auth.resend({
-      type: 'signup',
-      email: normalizedEmail,
-    });
 
-    if (error) {
-      throw error;
+    if (isSupabaseConfigured()) {
+      try {
+        const { error } = await supabase.auth.resend({
+          type: 'signup',
+          email: normalizedEmail,
+        });
+
+        if (error) {
+          throw error;
+        }
+
+        return { sent: true };
+      } catch (err) {
+        if (err.message !== 'Supabase is not configured') {
+          throw err;
+        }
+      }
     }
 
-    return { sent: true };
+    // Local-only resend OTP fallback
+    const pendingRegistrations = getPendingRegistrations();
+    const record = pendingRegistrations.find((candidate) => candidate.email === normalizedEmail);
+
+    if (!record) {
+      throw createLocalError('No pending registration found for this email', 400);
+    }
+
+    const otpCode = generateCode();
+    record.otpCode = otpCode;
+    record.created_date = new Date().toISOString();
+    savePendingRegistrations(pendingRegistrations);
+
+    return { sent: true, otpCode };
   },
 
   setToken(accessToken) {

@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Save, Loader2, Plus, X, Upload } from 'lucide-react';
+import { ArrowLeft, Save, Loader2, Plus, X, Upload, Sparkles, Image as ImageIcon, DollarSign } from 'lucide-react';
 
 const LOCATIONS = ['Canggu', 'Seminyak', 'Uluwatu', 'Ubud', 'Sanur', 'Nusa Dua'];
 const AMENITY_OPTIONS = [
@@ -116,6 +116,38 @@ export default function AdminVillaForm() {
           <p className="text-slate-500 text-sm">{isEdit ? form.name : 'Create a new villa listing'}</p>
         </div>
       </div>
+      
+      {isEdit && (
+        <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 mb-6 flex flex-wrap items-center justify-between gap-4">
+          <div className="space-y-0.5">
+            <h3 className="text-white text-sm font-semibold">Quick Actions</h3>
+            <p className="text-slate-500 text-xs">Manage other assets and rules related to this villa</p>
+          </div>
+          <div className="flex gap-2.5">
+            <Link
+              to="/admin/villas/amenities"
+              state={{ villaId: id }}
+              className="flex items-center gap-1.5 bg-slate-950 border border-slate-800 hover:bg-slate-800 text-slate-300 text-xs px-3.5 py-2 rounded-lg transition"
+            >
+              <Sparkles size={14} className="text-amber-500" /> Amenities Manager
+            </Link>
+            <Link
+              to="/admin/villas/gallery"
+              state={{ villaId: id }}
+              className="flex items-center gap-1.5 bg-slate-950 border border-slate-800 hover:bg-slate-800 text-slate-300 text-xs px-3.5 py-2 rounded-lg transition"
+            >
+              <ImageIcon size={14} className="text-cyan-400" /> Gallery Manager
+            </Link>
+            <Link
+              to="/admin/villas/pricing"
+              state={{ villaId: id }}
+              className="flex items-center gap-1.5 bg-slate-950 border border-slate-800 hover:bg-slate-800 text-slate-300 text-xs px-3.5 py-2 rounded-lg transition"
+            >
+              <DollarSign size={14} className="text-green-400" /> Pricing Overrides
+            </Link>
+          </div>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Basic Info */}

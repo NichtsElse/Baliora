@@ -42,6 +42,61 @@ const sendEmailJsMessage = async ({
   throw new Error(errorText || 'EmailJS send failed');
 };
 
+const buildWhatsappMessage = (body) => {
+  if (body.type === 'consultation') {
+    return [
+      `*BALIORA - NOTIFIKASI KONSULTASI BARU*`,
+      ``,
+      `Nama: ${body.name || '-'}`,
+      `Email: ${body.email || '-'}`,
+      `WhatsApp: ${body.whatsapp || '-'}`,
+      `Lokasi Villa: ${body.villa_location || '-'}`,
+      `Jumlah Kamar: ${body.bedroom_count || '-'}`,
+      `Status Saat Ini: ${body.current_status || '-'}`,
+      `Pesan: ${body.message || '-'}`,
+    ].join('\n');
+  }
+
+  if (body.type === 'booking') {
+    return [
+      `*BALIORA - NOTIFIKASI BOOKING BARU*`,
+      ``,
+      `Villa: ${body.villa_name || '-'}`,
+      `Nama Tamu: ${body.guest_name || '-'}`,
+      `Email: ${body.email || '-'}`,
+      `WhatsApp: ${body.whatsapp || '-'}`,
+      `Check-In: ${body.check_in || '-'}`,
+      `Check-Out: ${body.check_out || '-'}`,
+      `Tamu Total: ${body.guests || '-'}`,
+      `Permintaan Khusus: ${body.special_requests || '-'}`,
+    ].join('\n');
+  }
+
+  return '';
+};
+
+const sendFonnteMessage = async ({ token, target, message }) => {
+  try {
+    const response = await fetch('https://api.fonnte.com/send', {
+      method: 'POST',
+      headers: {
+        'Authorization': token,
+      },
+      body: new URLSearchParams({
+        target: target,
+        message: message,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text().catch(() => 'Unknown Fonnte error');
+      console.error('Fonnte send failed:', errorText);
+    }
+  } catch (error) {
+    console.error('Fonnte request failed:', error);
+  }
+};
+
 export default async function handler(request, response) {
   if (request.method !== 'POST') {
     response.setHeader('Allow', 'POST');
@@ -90,6 +145,20 @@ export default async function handler(request, response) {
         privateKey,
         templateParams: buildOwnerTemplateParams(leadPayload, request.body || {}, ownerEmail),
       });
+
+      // 3. Send optional WhatsApp notification via Fonnte
+      const fonnteToken = process.env.FONNTE_TOKEN;
+      const whatsappTarget = process.env.WHATSAPP_NOTIFICATION_TARGET;
+      if (fonnteToken && whatsappTarget) {
+        const waMessage = buildWhatsappMessage(request.body || {});
+        if (waMessage) {
+          await sendFonnteMessage({
+            token: fonnteToken,
+            target: whatsappTarget,
+            message: waMessage,
+          });
+        }
+      }
     }
 
     return response.status(200).json({ ok: true });

@@ -30,6 +30,17 @@ const STORAGE_KEYS = {
   ActivityLog: 'baliora_admin_activity_logs',
   User: 'baliora_auth_users',
   Session: 'baliora_auth_session',
+  Reservation: 'baliora_reservations',
+  Guest: 'baliora_guests',
+  CommunicationLog: 'baliora_communication_logs',
+  HousekeepingTask: 'baliora_housekeeping_tasks',
+  MaintenanceTicket: 'baliora_maintenance_tickets',
+  OpsStaff: 'baliora_ops_staff',
+  Vendor: 'baliora_vendors',
+  InventoryItem: 'baliora_inventory_items',
+  VillaPricingRule: 'baliora_villa_pricing_rules',
+  OwnerContract: 'baliora_owner_contracts',
+  OwnerRevenueEntry: 'baliora_owner_revenue_entries',
 };
 
 const ENTITY_DEFAULTS = {
@@ -37,13 +48,171 @@ const ENTITY_DEFAULTS = {
   BookingInquiry: () => [],
   Inquiry: () => [],
   VillaAssessment: () => [],
-  VillaOwner: () => [],
+  VillaOwner: () => [
+    {
+      id: 'owner_1',
+      name: 'James Hartley',
+      email: 'james.hartley@example.com',
+      whatsapp: '+61 491 570 156',
+      nationality: 'Australian',
+      status: 'active',
+      created_date: '2024-12-15T10:00:00Z',
+    },
+    {
+      id: 'owner_2',
+      name: 'Sofia Andersson',
+      email: 'sofia.andersson@example.com',
+      whatsapp: '+46 8 123 4567',
+      nationality: 'Swedish',
+      status: 'active',
+      created_date: '2024-12-15T10:00:00Z',
+    },
+    {
+      id: 'owner_3',
+      name: 'BALIORA Owner',
+      email: 'owner@example.com',
+      whatsapp: '+62 812 9999 1111',
+      nationality: 'Indonesian',
+      status: 'active',
+      created_date: '2026-01-01T00:00:00Z',
+    }
+  ],
   BlogPost: () => [],
   FAQ: () => [],
   Testimonial: () => [],
   WebsiteSetting: () => [],
   ActivityLog: () => [],
   User: () => [],
+  // Reservations reference villa_id as UUID in Supabase — no slug-based seed
+  Reservation: () => [],
+  Guest: () => [
+    {
+      id: 'guest_1',
+      name: 'Liam Vance',
+      email: 'liam.vance@example.com',
+      whatsapp: '+628123456789',
+      nationality: 'Australian',
+      notes: 'Prefers quiet rooms, gluten-free diet.',
+      total_bookings: 1,
+      total_spent: 3150,
+      status: 'active',
+      created_date: '2026-06-15T12:00:00Z',
+    },
+    {
+      id: 'guest_2',
+      name: 'Sophia Loren',
+      email: 'sophia.l@example.com',
+      whatsapp: '+61491570156',
+      nationality: 'Italian',
+      notes: 'Requested baby cot in past bookings.',
+      total_bookings: 1,
+      total_spent: 1520,
+      status: 'active',
+      created_date: '2026-06-20T08:30:00Z',
+    },
+    {
+      id: 'guest_3',
+      name: 'David Beck',
+      email: 'david@example.com',
+      whatsapp: '+447911123456',
+      nationality: 'British',
+      notes: 'Loyal guest, travels with family.',
+      total_bookings: 3,
+      total_spent: 6750,
+      status: 'active',
+      created_date: '2026-05-01T14:22:00Z',
+    }
+  ],
+  CommunicationLog: () => [
+    {
+      id: 'comm_1',
+      recipient_name: 'Liam Vance',
+      recipient_email: 'liam.vance@example.com',
+      channel: 'Email',
+      subject: 'Villa Booking Confirmed - BALIORA',
+      message: 'Dear Liam Vance, your booking for Villa Tirta Canggu from 2026-07-10 to 2026-07-17 is confirmed. Thank you!',
+      status: 'sent',
+      created_date: '2026-06-15T12:05:00Z',
+    },
+    {
+      id: 'comm_2',
+      recipient_name: 'Sophia Loren',
+      recipient_email: 'sophia.l@example.com',
+      channel: 'WhatsApp',
+      subject: 'Pre-arrival Information',
+      message: 'Hi Sophia, we are preparing Villa Karang Seminyak for your stay starting Aug 1st. Do you need any airport transfer arrangements?',
+      status: 'sent',
+      created_date: '2026-06-21T09:00:00Z',
+    }
+  ],
+  // HousekeepingTask references villa_id UUID in Supabase — no slug-based seed
+  HousekeepingTask: () => [],
+  // MaintenanceTicket references villa_id UUID in Supabase — no slug-based seed
+  MaintenanceTicket: () => [],
+  OpsStaff: () => [
+    {
+      id: 'staff_1',
+      name: 'Wayan Sudiarta',
+      role: 'Housekeeper',
+      contact_number: '+6281234567890',
+      shift: 'Morning',
+      assigned_villas: 'Villa Tirta Canggu',
+      status: 'active',
+      created_date: '2026-01-10T08:00:00Z',
+    },
+    {
+      id: 'staff_2',
+      name: 'Kadek Wardana',
+      role: 'Housekeeper',
+      contact_number: '+6287654321098',
+      shift: 'Afternoon',
+      assigned_villas: 'Villa Karang Seminyak',
+      status: 'active',
+      created_date: '2026-02-15T09:00:00Z',
+    },
+    {
+      id: 'staff_3',
+      name: 'Made Artawan',
+      role: 'Technician',
+      contact_number: '+6282227888025',
+      shift: 'Morning',
+      assigned_villas: 'All Villas',
+      status: 'active',
+      created_date: '2026-03-01T08:30:00Z',
+    }
+  ],
+  Vendor: () => [
+    {
+      id: 'vendor_1',
+      company_name: 'Bali Cool AC Services',
+      service_type: 'AC Maintenance',
+      contact_person: 'Ketut',
+      phone: '+628111222333',
+      email: 'ac.cool@bali.com',
+      rating: 5,
+      status: 'active',
+      created_date: '2026-01-05T10:00:00Z',
+    },
+    {
+      id: 'vendor_2',
+      company_name: 'Dewata Pool & Spa Care',
+      service_type: 'Pool Maintenance',
+      contact_person: 'Gede',
+      phone: '+628555666777',
+      email: 'dewata.pool@bali.com',
+      rating: 4,
+      status: 'active',
+      created_date: '2026-01-08T11:00:00Z',
+    }
+  ],
+  // InventoryItem references villa_id UUID in Supabase — no slug-based seed
+  InventoryItem: () => [],
+  // VillaPricingRule references villa_id UUID in Supabase — no slug-based seed
+  VillaPricingRule: () => [],
+  // OwnerContract references villa_id UUID in Supabase — no slug-based seed
+  OwnerContract: () => [],
+  // OwnerRevenueEntry references villa_id UUID in Supabase — no slug-based seed
+  OwnerRevenueEntry: () => [],
 };
 
 const REMOTE_TABLES = {
@@ -57,6 +226,17 @@ const REMOTE_TABLES = {
   WebsiteSetting: 'ba_website_settings',
   ActivityLog: 'ba_activity_logs',
   User: 'ba_app_users',
+  Reservation: 'ba_reservations',
+  Guest: 'ba_guests',
+  CommunicationLog: 'ba_communication_logs',
+  HousekeepingTask: 'ba_housekeeping_tasks',
+  MaintenanceTicket: 'ba_maintenance_tickets',
+  OpsStaff: 'ba_ops_staff',
+  Vendor: 'ba_vendors',
+  InventoryItem: 'ba_inventory_items',
+  VillaPricingRule: 'ba_villa_pricing_rules',
+  OwnerContract: 'ba_owner_contracts',
+  OwnerRevenueEntry: 'ba_owner_revenue_entries',
 };
 
 const remoteFieldMap = (record) => {
@@ -90,6 +270,23 @@ const ensureCollection = (entityName) => {
   const key = STORAGE_KEYS[entityName];
   const existingValue = readJson(key, null);
   if (existingValue) {
+    if (entityName === 'VillaListing') {
+      let changed = false;
+      const repaired = existingValue.map((v) => {
+        if (!v.slug || v.slug === 'undefined') {
+          v.slug = String(v.name || 'villa')
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/(^-|-$)/g, '');
+          changed = true;
+        }
+        return v;
+      });
+      if (changed) {
+        writeJson(key, repaired);
+      }
+      return repaired;
+    }
     return existingValue;
   }
 
@@ -154,7 +351,27 @@ const syncRemoteList = async (entityName, filters = {}, options = {}) => {
   }
 
   try {
-    const rows = await listSupabaseRows(tableName, filters, options);
+    let rows = await listSupabaseRows(tableName, filters, options);
+    
+    // Auto-seed remote Supabase table if it is completely empty and we have local dummy/mock data
+    const isFiltered = Object.keys(filters).length > 0;
+    if (rows.length === 0 && !isFiltered) {
+      const defaultFactory = ENTITY_DEFAULTS[entityName];
+      const defaults = defaultFactory ? defaultFactory() : [];
+      if (defaults.length > 0) {
+        console.log(`[Supabase Auto-Seed] Seeding empty table '${tableName}' with default mock data...`);
+        for (const record of defaults) {
+          try {
+            await insertSupabaseRow(tableName, remoteFieldMap(record));
+          } catch (insertErr) {
+            console.warn(`[Supabase Auto-Seed] Failed to seed record in '${tableName}':`, insertErr);
+          }
+        }
+        // Refetch after seeding
+        rows = await listSupabaseRows(tableName, filters, options);
+      }
+    }
+
     const mappedRows = rows.map(localFieldMap);
     saveCollection(entityName, mappedRows);
     return mappedRows;
@@ -178,8 +395,8 @@ const syncRemoteInsert = async (entityName, payload) => {
     const row = await insertSupabaseRow(tableName, remoteFieldMap(payload));
     return row ? localFieldMap(row) : null;
   } catch (error) {
-    console.error('Supabase sync insert failed:', error);
-    throw error;
+    console.warn('Supabase sync insert failed:', error);
+    return null;
   }
 };
 
@@ -216,8 +433,8 @@ const syncRemoteUpdate = async (entityName, id, payload) => {
     const rows = await updateSupabaseRows(tableName, { id }, remoteFieldMap(payload));
     return rows[0] ? localFieldMap(rows[0]) : null;
   } catch (error) {
-    console.error('Supabase sync update failed:', error);
-    throw error;
+    console.warn('Supabase sync update failed:', error);
+    return null;
   }
 };
 
@@ -360,21 +577,27 @@ const buildCrudEntity = (entityName, options = {}) => {
   };
 };
 
-const normalizeVillaPayload = (payload) => ({
-  ...payload,
-  slug: payload.slug || String(payload.name || '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, ''),
-});
+const normalizeVillaPayload = (payload) => {
+  const normalized = { ...payload };
+  if (payload.name && !payload.slug) {
+    normalized.slug = String(payload.name)
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+  }
+  return normalized;
+};
 
-const normalizeBlogPayload = (payload) => ({
-  ...payload,
-  slug: payload.slug || String(payload.title || '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, ''),
-});
+const normalizeBlogPayload = (payload) => {
+  const normalized = { ...payload };
+  if (payload.title && !payload.slug) {
+    normalized.slug = String(payload.title)
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+  }
+  return normalized;
+};
 
 const readFileAsDataUrl = (file) =>
   new Promise((resolve, reject) => {
@@ -490,6 +713,50 @@ export const localClient = {
       },
     },
     User: buildUserEntity(),
+    Reservation: buildCrudEntity('Reservation', {
+      activityLabel: 'Reservation',
+      createDefaults: { status: 'confirmed', payment_status: 'unpaid' },
+    }),
+    Guest: buildCrudEntity('Guest', {
+      activityLabel: 'Guest profile',
+      createDefaults: { status: 'active', total_bookings: 0, total_spent: 0 },
+    }),
+    CommunicationLog: buildCrudEntity('CommunicationLog', {
+      activityLabel: 'Communication log',
+      createDefaults: { status: 'sent' },
+    }),
+    HousekeepingTask: buildCrudEntity('HousekeepingTask', {
+      activityLabel: 'Housekeeping task',
+      createDefaults: { status: 'pending' },
+    }),
+    MaintenanceTicket: buildCrudEntity('MaintenanceTicket', {
+      activityLabel: 'Maintenance ticket',
+      createDefaults: { status: 'pending', priority: 'medium' },
+    }),
+    OpsStaff: buildCrudEntity('OpsStaff', {
+      activityLabel: 'Operations staff',
+      createDefaults: { status: 'active', shift: 'Morning' },
+    }),
+    Vendor: buildCrudEntity('Vendor', {
+      activityLabel: 'Vendor profile',
+      createDefaults: { status: 'active', rating: 5 },
+    }),
+    InventoryItem: buildCrudEntity('InventoryItem', {
+      activityLabel: 'Inventory item',
+      createDefaults: { stock_level: 0, minimum_required: 5 },
+    }),
+    VillaPricingRule: buildCrudEntity('VillaPricingRule', {
+      activityLabel: 'Villa pricing rule',
+      createDefaults: { rate_type: 'multiplier', value: 1.0 },
+    }),
+    OwnerContract: buildCrudEntity('OwnerContract', {
+      activityLabel: 'Owner contract',
+      createDefaults: { status: 'active', management_fee_type: 'percentage' },
+    }),
+    OwnerRevenueEntry: buildCrudEntity('OwnerRevenueEntry', {
+      activityLabel: 'Owner revenue entry',
+      createDefaults: { payment_status: 'pending' },
+    }),
   },
   integrations: {
     Core: {

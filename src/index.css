@@ -91,4 +91,9 @@
   body {
     @apply bg-background text-foreground font-body;
   }
+
+  /* Prevent window-level scroll when admin layout is active */
+  body.admin-layout {
+    overflow: hidden;
+  }
 }

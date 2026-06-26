@@ -20,6 +20,14 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminVillas from './pages/admin/AdminVillas';
 import AdminVillaForm from './pages/admin/AdminVillaForm';
 import AdminBookings from './pages/admin/AdminBookings';
+import AdminReservations from './pages/admin/AdminReservations';
+import AdminGuests from './pages/admin/AdminGuests';
+import AdminCommunications from './pages/admin/AdminCommunications';
+import AdminHousekeeping from './pages/admin/AdminHousekeeping';
+import AdminMaintenance from './pages/admin/AdminMaintenance';
+import AdminStaff from './pages/admin/AdminStaff';
+import AdminVendors from './pages/admin/AdminVendors';
+import AdminInventory from './pages/admin/AdminInventory';
 import AdminInquiries from './pages/admin/AdminInquiries';
 import AdminFAQs from './pages/admin/AdminFAQs';
 import AdminBlog from './pages/admin/AdminBlog';
@@ -31,7 +39,18 @@ import AdminSettings from './pages/admin/AdminSettings';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminActivity from './pages/admin/AdminActivity';
 import AdminPlaceholder from './pages/admin/AdminPlaceholder';
+import AdminAmenities from './pages/admin/AdminAmenities';
+import AdminGallery from './pages/admin/AdminGallery';
+import AdminPricing from './pages/admin/AdminPricing';
 import AdminRoles from './pages/admin/AdminRoles';
+import AdminContracts from './pages/admin/AdminContracts';
+import AdminRevenue from './pages/admin/AdminRevenue';
+import AdminReports from './pages/admin/AdminReports';
+import AdminPromotions from './pages/admin/AdminPromotions';
+import AdminLandingPages from './pages/admin/AdminLandingPages';
+import AdminSEO from './pages/admin/AdminSEO';
+import AdminAnalytics from './pages/admin/AdminAnalytics';
+import AdminIntegrations from './pages/admin/AdminIntegrations';
 import AdminContentHomepage from './pages/admin/AdminContentHomepage';
 import AdminContentAbout from './pages/admin/AdminContentAbout';
 import AdminContentServices from './pages/admin/AdminContentServices';
@@ -136,30 +155,30 @@ const AuthenticatedApp = () => {
         <Route path="/admin/activity" element={<AdminActivity />} />
         <Route path="/admin/settings" element={<AdminSettings />} />
         <Route path="/admin/settings/roles" element={<AdminRoles />} />
-        <Route path="/admin/settings/integrations" element={<AdminPlaceholder />} />
+        <Route path="/admin/settings/integrations" element={<AdminIntegrations />} />
         <Route path="/admin/settings/audit" element={<AdminActivity />} />
         <Route path="/admin/content/navbar" element={<AdminContentNavbar />} />
         <Route path="/admin/content/homepage" element={<AdminContentHomepage />} />
         <Route path="/admin/content/about" element={<AdminContentAbout />} />
         <Route path="/admin/content/services" element={<AdminContentServices />} />
-        <Route path="/admin/villas/amenities" element={<AdminPlaceholder />} />
-        <Route path="/admin/villas/gallery" element={<AdminPlaceholder />} />
-        <Route path="/admin/villas/pricing" element={<AdminPlaceholder />} />
-        <Route path="/admin/bookings/reservations" element={<AdminPlaceholder />} />
-        <Route path="/admin/bookings/guests" element={<AdminPlaceholder />} />
-        <Route path="/admin/bookings/communications" element={<AdminPlaceholder />} />
-        <Route path="/admin/owners/contracts" element={<AdminPlaceholder />} />
-        <Route path="/admin/owners/reports" element={<AdminPlaceholder />} />
-        <Route path="/admin/owners/revenue" element={<AdminPlaceholder />} />
-        <Route path="/admin/operations/housekeeping" element={<AdminPlaceholder />} />
-        <Route path="/admin/operations/maintenance" element={<AdminPlaceholder />} />
-        <Route path="/admin/operations/vendors" element={<AdminPlaceholder />} />
-        <Route path="/admin/operations/inventory" element={<AdminPlaceholder />} />
-        <Route path="/admin/operations/staff" element={<AdminPlaceholder />} />
-        <Route path="/admin/marketing/promotions" element={<AdminPlaceholder />} />
-        <Route path="/admin/marketing/landing-pages" element={<AdminPlaceholder />} />
-        <Route path="/admin/marketing/seo" element={<AdminPlaceholder />} />
-        <Route path="/admin/marketing/analytics" element={<AdminPlaceholder />} />
+        <Route path="/admin/villas/amenities" element={<AdminAmenities />} />
+        <Route path="/admin/villas/gallery" element={<AdminGallery />} />
+        <Route path="/admin/villas/pricing" element={<AdminPricing />} />
+        <Route path="/admin/bookings/reservations" element={<AdminReservations />} />
+        <Route path="/admin/bookings/guests" element={<AdminGuests />} />
+        <Route path="/admin/bookings/communications" element={<AdminCommunications />} />
+        <Route path="/admin/owners/contracts" element={<AdminContracts />} />
+        <Route path="/admin/owners/reports" element={<AdminReports />} />
+        <Route path="/admin/owners/revenue" element={<AdminRevenue />} />
+        <Route path="/admin/operations/housekeeping" element={<AdminHousekeeping />} />
+        <Route path="/admin/operations/maintenance" element={<AdminMaintenance />} />
+        <Route path="/admin/operations/vendors" element={<AdminVendors />} />
+        <Route path="/admin/operations/inventory" element={<AdminInventory />} />
+        <Route path="/admin/operations/staff" element={<AdminStaff />} />
+        <Route path="/admin/marketing/promotions" element={<AdminPromotions />} />
+        <Route path="/admin/marketing/landing-pages" element={<AdminLandingPages />} />
+        <Route path="/admin/marketing/seo" element={<AdminSEO />} />
+        <Route path="/admin/marketing/analytics" element={<AdminAnalytics />} />
       </Route>
       </Route>
       <Route path="*" element={<PageNotFound />} />

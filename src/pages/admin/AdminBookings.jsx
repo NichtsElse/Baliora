@@ -207,13 +207,78 @@ export default function AdminBookings() {
 
   const { data: bookings = [], isLoading } = useQuery({
     queryKey: ['admin-bookings'],
-     queryFn: () => localClient.entities.BookingInquiry.list('-created_date', 100),
+    queryFn: () => localClient.entities.BookingInquiry.list('-created_date', 100),
+  });
+
+  const { data: villas = [] } = useQuery({
+    queryKey: ['admin-villas-list-bookings'],
+    queryFn: () => localClient.entities.VillaListing.list('name', 100),
   });
 
   const updateMutation = useMutation({
-     mutationFn: ({ id, data }) => localClient.entities.BookingInquiry.update(id, data),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: ['admin-bookings'] }),
+    mutationFn: async ({ id, data }) => {
+      const updatedInquiry = await localClient.entities.BookingInquiry.update(id, data);
+      
+      if (data.status === 'confirmed') {
+        const booking = bookings.find(b => b.id === id);
+        if (booking) {
+          const matchedVilla = villas.find(v => v.name === booking.villa_name || v.id === booking.villa_id);
+          const price = matchedVilla ? (matchedVilla.price_per_night || 250) : 250;
+          const nights = booking.check_in && booking.check_out
+            ? Math.round((new Date(booking.check_out) - new Date(booking.check_in)) / 86400000)
+            : 1;
+          const totalPrice = nights * price;
+
+          // 1. Create Reservation
+          await localClient.entities.Reservation.create({
+            villa_id: booking.villa_id || matchedVilla?.id || 'unknown',
+            villa_name: booking.villa_name,
+            guest_name: booking.guest_name,
+            email: booking.email,
+            whatsapp: booking.whatsapp,
+            check_in: booking.check_in,
+            check_out: booking.check_out,
+            guests: booking.guests || 2,
+            total_price: totalPrice,
+            status: 'confirmed',
+            payment_status: 'unpaid',
+            notes: booking.special_requests || '',
+          });
+
+          // 2. Create Guest Profile (if not exists)
+          const existingGuests = await localClient.entities.Guest.filter({ email: booking.email });
+          if (existingGuests.length === 0) {
+            await localClient.entities.Guest.create({
+              name: booking.guest_name,
+              email: booking.email,
+              whatsapp: booking.whatsapp,
+              nationality: 'Unknown',
+              total_bookings: 1,
+              total_spent: totalPrice,
+              notes: 'Created automatically from Booking Inquiry.',
+              status: 'active',
+            });
+          }
+
+          // 3. Create Communication Confirmation Log
+          await localClient.entities.CommunicationLog.create({
+            recipient_name: booking.guest_name,
+            recipient_email: booking.email,
+            channel: 'Email',
+            subject: `Villa Booking Confirmed - ${booking.villa_name}`,
+            message: `Dear ${booking.guest_name}, your booking request for ${booking.villa_name} has been confirmed. Dates: ${booking.check_in} to ${booking.check_out}. Total price: $${totalPrice}.`,
+            status: 'sent',
+          });
+        }
+      }
+      return updatedInquiry;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-bookings'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-reservations'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-guests'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-comms'] });
+    },
   });
 
   const filtered = bookings.filter((booking) => {

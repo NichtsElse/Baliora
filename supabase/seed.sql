@@ -401,3 +401,141 @@ on conflict (id) do update set
   details = excluded.details,
   user_name = excluded.user_name,
   updated_at = now();
+
+-- Seed data for Reservations, Guests, and Communication Logs
+insert into public.ba_reservations (id, villa_id, villa_name, guest_name, email, whatsapp, check_in, check_out, guests, total_price, status, payment_status, notes)
+values
+  (
+    '40000000-0000-0000-0000-000000000001',
+    '10000000-0000-0000-0000-000000000001',
+    'Villa Tirta Canggu',
+    'Liam Vance',
+    'liam.vance@example.com',
+    '+628123456789',
+    '2026-07-10',
+    '2026-07-17',
+    4,
+    3150.00,
+    'confirmed',
+    'paid',
+    'Honeymoon setup requested. Gluten-free breakfast choices.'
+  ),
+  (
+    '40000000-0000-0000-0000-000000000002',
+    '10000000-0000-0000-0000-000000000002',
+    'Villa Karang Seminyak',
+    'Sophia Loren',
+    'sophia.l@example.com',
+    '+61491570156',
+    '2026-08-01',
+    '2026-08-05',
+    2,
+    1520.00,
+    'confirmed',
+    'partially_paid',
+    'Needs airport pick-up.'
+  ),
+  (
+    '40000000-0000-0000-0000-000000000003',
+    '10000000-0000-0000-0000-000000000001',
+    'Villa Tirta Canggu',
+    'David Beck',
+    'david@example.com',
+    '+447911123456',
+    '2026-06-10',
+    '2026-06-15',
+    6,
+    2250.00,
+    'checked_out',
+    'paid',
+    'Very satisfied.'
+  )
+on conflict (id) do update set
+  villa_id = excluded.villa_id,
+  villa_name = excluded.villa_name,
+  guest_name = excluded.guest_name,
+  email = excluded.email,
+  whatsapp = excluded.whatsapp,
+  check_in = excluded.check_in,
+  check_out = excluded.check_out,
+  guests = excluded.guests,
+  total_price = excluded.total_price,
+  status = excluded.status,
+  payment_status = excluded.payment_status,
+  notes = excluded.notes,
+  updated_at = now();
+
+insert into public.ba_guests (id, name, email, whatsapp, nationality, notes, total_bookings, total_spent, status)
+values
+  (
+    '50000000-0000-0000-0000-000000000001',
+    'Liam Vance',
+    'liam.vance@example.com',
+    '+628123456789',
+    'Australian',
+    'Prefers quiet rooms, gluten-free diet.',
+    1,
+    3150.00,
+    'active'
+  ),
+  (
+    '50000000-0000-0000-0000-000000000002',
+    'Sophia Loren',
+    'sophia.l@example.com',
+    '+61491570156',
+    'Italian',
+    'Requested baby cot in past bookings.',
+    1,
+    1520.00,
+    'active'
+  ),
+  (
+    '50000000-0000-0000-0000-000000000003',
+    'David Beck',
+    'david@example.com',
+    '+447911123456',
+    'British',
+    'Loyal guest, travels with family.',
+    3,
+    6750.00,
+    'active'
+  )
+on conflict (email) do update set
+  name = excluded.name,
+  whatsapp = excluded.whatsapp,
+  nationality = excluded.nationality,
+  notes = excluded.notes,
+  total_bookings = excluded.total_bookings,
+  total_spent = excluded.total_spent,
+  status = excluded.status,
+  updated_at = now();
+
+insert into public.ba_communication_logs (id, recipient_name, recipient_email, channel, subject, message, status)
+values
+  (
+    '60000000-0000-0000-0000-000000000001',
+    'Liam Vance',
+    'liam.vance@example.com',
+    'Email',
+    'Villa Booking Confirmed - BALIORA',
+    'Dear Liam Vance, your booking for Villa Tirta Canggu from 2026-07-10 to 2026-07-17 is confirmed. Thank you!',
+    'sent'
+  ),
+  (
+    '60000000-0000-0000-0000-000000000002',
+    'Sophia Loren',
+    'sophia.l@example.com',
+    'WhatsApp',
+    'Pre-arrival Information',
+    'Hi Sophia, we are preparing Villa Karang Seminyak for your stay starting Aug 1st. Do you need any airport transfer arrangements?',
+    'sent'
+  )
+on conflict (id) do update set
+  recipient_name = excluded.recipient_name,
+  recipient_email = excluded.recipient_email,
+  channel = excluded.channel,
+  subject = excluded.subject,
+  message = excluded.message,
+  status = excluded.status,
+  updated_at = now();
+

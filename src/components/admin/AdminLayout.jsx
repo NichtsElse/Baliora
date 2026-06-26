@@ -5,7 +5,7 @@
  * Public functions: AdminLayout default export.
  * Side effects: can close the local session, navigate the user out of the admin area, and open the public site.
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -169,6 +169,20 @@ export default function AdminLayout() {
   const location = useLocation();
   const allowedNav = filterAdminNavItems(NAV, user?.role || 'user');
 
+  useEffect(() => {
+    document.documentElement.classList.add('dark');
+    // Lock window scroll — only <main> element should scroll
+    const prevHtmlOverflow = document.documentElement.style.overflow;
+    const prevBodyOverflow = document.body.style.overflow;
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.documentElement.classList.remove('dark');
+      document.documentElement.style.overflow = prevHtmlOverflow;
+      document.body.style.overflow = prevBodyOverflow;
+    };
+  }, []);
+
   const handleLogout = () => logout();
 
   const Sidebar = ({ mobile = false }) => (
@@ -216,7 +230,7 @@ export default function AdminLayout() {
   );
 
   return (
-    <div className="flex h-screen bg-slate-950 overflow-hidden">
+    <div className="fixed inset-0 flex bg-slate-950 overflow-hidden">
       {/* Desktop sidebar */}
       <div className="hidden lg:flex flex-col relative">
         <Sidebar />
@@ -249,7 +263,7 @@ export default function AdminLayout() {
       </AnimatePresence>
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0 min-h-0 overflow-hidden">
         {/* Topbar */}
         <header className="h-16 bg-slate-900 border-b border-slate-800 flex items-center px-4 gap-4 flex-shrink-0">
           <button
@@ -281,7 +295,7 @@ export default function AdminLayout() {
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto bg-slate-950">
+        <main className="flex-1 min-h-0 overflow-y-auto bg-slate-950">
           {canAccessAdminPath(user?.role || 'user', location.pathname) ? (
             <Outlet />
           ) : (

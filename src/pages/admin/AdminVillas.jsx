@@ -4,7 +4,7 @@ import { localClient } from '@/api/localClient';
 import { Link } from 'react-router-dom';
 import {
   Plus, Search, Edit, Trash2, Eye, MapPin, Bed, Star,
-  CheckCircle, AlertTriangle, EyeOff, Loader2
+  CheckCircle, AlertTriangle, EyeOff, Loader2, Sparkles, Image as ImageIcon, DollarSign
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 
@@ -140,14 +140,26 @@ export default function AdminVillas() {
                         </span>
                       </td>
                       <td className="px-4 py-3.5">
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-0.5">
                           <Link to={`/villas/${villa.slug}`} target="_blank"
                             className="p-1.5 text-slate-500 hover:text-blue-400 transition-colors" title="View on site">
                             <Eye size={15} />
                           </Link>
                           <Link to={`/admin/villas/${villa.id}/edit`}
-                            className="p-1.5 text-slate-500 hover:text-amber-400 transition-colors" title="Edit">
+                            className="p-1.5 text-slate-500 hover:text-amber-400 transition-colors" title="Edit Info">
                             <Edit size={15} />
+                          </Link>
+                          <Link to="/admin/villas/amenities" state={{ villaId: villa.id }}
+                            className="p-1.5 text-slate-500 hover:text-amber-500 transition-colors" title="Amenities">
+                            <Sparkles size={15} />
+                          </Link>
+                          <Link to="/admin/villas/gallery" state={{ villaId: villa.id }}
+                            className="p-1.5 text-slate-500 hover:text-cyan-450 transition-colors" title="Gallery Portfolio">
+                            <ImageIcon size={15} />
+                          </Link>
+                          <Link to="/admin/villas/pricing" state={{ villaId: villa.id }}
+                            className="p-1.5 text-slate-500 hover:text-green-450 transition-colors" title="Pricing & Overrides">
+                            <DollarSign size={15} />
                           </Link>
                           <button
                             onClick={() => { if (confirm(`Delete "${villa.name}"?`)) deleteMutation.mutate(villa.id); }}
